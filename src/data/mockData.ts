@@ -15,6 +15,7 @@ export const weatherData = [
     windSpeed: 15,
     humidity: 65,
     visibility: 10,
+    cloudCover: 15,
     time: '14:30'
   },
   {
@@ -24,6 +25,7 @@ export const weatherData = [
     windSpeed: 8,
     humidity: 72,
     visibility: 8,
+    cloudCover: 75,
     time: '11:30'
   },
   {
@@ -33,6 +35,7 @@ export const weatherData = [
     windSpeed: 22,
     humidity: 85,
     visibility: 5,
+    cloudCover: 95,
     time: '19:30'
   },
   {
@@ -42,6 +45,7 @@ export const weatherData = [
     windSpeed: 12,
     humidity: 45,
     visibility: 15,
+    cloudCover: 10,
     time: '22:30'
   },
   {
@@ -51,6 +55,7 @@ export const weatherData = [
     windSpeed: 18,
     humidity: 78,
     visibility: 7,
+    cloudCover: 60,
     time: '03:30'
   },
   // Past 12 hours data
@@ -61,6 +66,7 @@ export const weatherData = [
     windSpeed: 12,
     humidity: 62,
     visibility: 10,
+    cloudCover: 20,
     time: '02:30'
   },
   {
@@ -70,18 +76,19 @@ export const weatherData = [
     windSpeed: 6,
     humidity: 68,
     visibility: 10,
+    cloudCover: 25,
     time: '23:30'
   },
 ];
 
 export const flightData = [
-  // Arrivals
+  // Future Arrivals
   {
     airport: 'JFK',
     type: 'arrival',
     flightNumber: 'AA 123',
     origin: 'LAX',
-    time: '15:45',
+    time: '18:45',
     status: 'On Time',
     gate: 'A12'
   },
@@ -90,7 +97,7 @@ export const flightData = [
     type: 'arrival',
     flightNumber: 'DL 456',
     origin: 'LHR',
-    time: '16:20',
+    time: '19:20',
     status: 'Delayed',
     gate: 'B5'
   },
@@ -99,7 +106,7 @@ export const flightData = [
     type: 'arrival',
     flightNumber: 'UA 789',
     origin: 'NRT',
-    time: '12:15',
+    time: '16:15',
     status: 'On Time',
     gate: 'C8'
   },
@@ -108,18 +115,18 @@ export const flightData = [
     type: 'arrival',
     flightNumber: 'BA 321',
     origin: 'DXB',
-    time: '20:10',
-    status: 'Boarding',
+    time: '22:10',
+    status: 'Scheduled',
     gate: 'T2-15'
   },
   
-  // Departures
+  // Future Departures
   {
     airport: 'JFK',
     type: 'departure',
     flightNumber: 'AA 654',
     origin: 'DXB',
-    time: '18:30',
+    time: '20:30',
     status: 'Boarding',
     gate: 'A8'
   },
@@ -128,8 +135,8 @@ export const flightData = [
     type: 'departure',
     flightNumber: 'DL 987',
     origin: 'LHR',
-    time: '14:45',
-    status: 'Departed',
+    time: '17:45',
+    status: 'On Time',
     gate: 'B12'
   },
   {
@@ -137,8 +144,8 @@ export const flightData = [
     type: 'departure',
     flightNumber: 'VS 234',
     origin: 'JFK',
-    time: '21:55',
-    status: 'On Time',
+    time: '23:55',
+    status: 'Scheduled',
     gate: 'T3-22'
   },
   {
@@ -146,7 +153,7 @@ export const flightData = [
     type: 'departure',
     flightNumber: 'EK 567',
     origin: 'NRT',
-    time: '01:40',
+    time: '02:40',
     status: 'Delayed',
     gate: 'C18'
   },
@@ -155,8 +162,8 @@ export const flightData = [
     type: 'departure',
     flightNumber: 'JL 890',
     origin: 'LAX',
-    time: '09:25',
-    status: 'On Time',
+    time: '11:25',
+    status: 'Scheduled',
     gate: 'D7'
   },
 ];

@@ -25,8 +25,10 @@ const FlightTable = ({ data }) => {
         return 'text-red-400 bg-red-400/20';
       case 'boarding':
         return 'text-yellow-400 bg-yellow-400/20';
-      case 'departed':
+      case 'scheduled':
         return 'text-blue-400 bg-blue-400/20';
+      case 'departed':
+        return 'text-gray-400 bg-gray-400/20';
       default:
         return 'text-gray-400 bg-gray-400/20';
     }
@@ -36,25 +38,25 @@ const FlightTable = ({ data }) => {
     const filteredFlights = filterFlights(flights);
     
     return (
-      <div className="space-y-1.5 max-h-44 overflow-y-auto">
+      <div className="space-y-1 max-h-44 overflow-y-auto">
         {filteredFlights.map((flight, index) => (
           <div 
             key={index}
-            className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-2 hover:bg-white/10 transition-all duration-300"
+            className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-1.5 hover:bg-white/10 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1">
                 <div className="p-0.5 rounded bg-blue-500/20">
                   <Plane className="w-3 h-3 text-blue-300" />
                 </div>
                 <span className="text-xs font-semibold text-white">{flight.flightNumber}</span>
               </div>
-              <span className={`text-xs px-1.5 py-0.5 rounded-full border ${getStatusColor(flight.status)}`}>
+              <span className={`text-xs px-1 py-0.5 rounded-full border ${getStatusColor(flight.status)}`}>
                 {flight.status}
               </span>
             </div>
             
-            <div className="grid grid-cols-2 gap-1.5 text-xs">
+            <div className="grid grid-cols-2 gap-1 text-xs">
               <div className="flex items-center space-x-1">
                 <MapPin className="w-3 h-3 text-purple-400" />
                 <span className="text-blue-200 truncate">{flight.origin}</span>
@@ -92,7 +94,7 @@ const FlightTable = ({ data }) => {
       <div className="flex backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-0.5">
         <button
           onClick={() => setActiveTab('arrivals')}
-          className={`flex-1 flex items-center justify-center space-x-1 py-1.5 px-2 rounded-md text-xs font-medium transition-all duration-300 ${
+          className={`flex-1 flex items-center justify-center space-x-1 py-1 px-1.5 rounded-md text-xs font-medium transition-all duration-300 ${
             activeTab === 'arrivals'
               ? 'bg-blue-500/30 text-white border border-blue-400/30'
               : 'text-blue-200 hover:text-white hover:bg-white/10'
@@ -103,7 +105,7 @@ const FlightTable = ({ data }) => {
         </button>
         <button
           onClick={() => setActiveTab('departures')}
-          className={`flex-1 flex items-center justify-center space-x-1 py-1.5 px-2 rounded-md text-xs font-medium transition-all duration-300 ${
+          className={`flex-1 flex items-center justify-center space-x-1 py-1 px-1.5 rounded-md text-xs font-medium transition-all duration-300 ${
             activeTab === 'departures'
               ? 'bg-blue-500/30 text-white border border-blue-400/30'
               : 'text-blue-200 hover:text-white hover:bg-white/10'

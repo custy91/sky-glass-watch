@@ -1,38 +1,24 @@
 
 import React, { useState } from 'react';
-import { Thermometer, Wind, Droplets, Eye, CloudRain, Search } from 'lucide-react';
+import { Thermometer, Wind, Droplets, Eye, Cloud, Search } from 'lucide-react';
 
 const WeatherTable = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredData = data.filter(item => 
-    item.airport.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.condition.toLowerCase().includes(searchTerm.toLowerCase())
+    item.airport.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getWeatherIcon = (condition) => {
     switch (condition.toLowerCase()) {
       case 'clear':
-        return <div className="w-4 h-4 rounded-full bg-yellow-400"></div>;
+        return <div className="w-3 h-3 rounded-full bg-yellow-400"></div>;
       case 'cloudy':
-        return <CloudRain className="w-4 h-4 text-gray-400" />;
+        return <Cloud className="w-3 h-3 text-gray-400" />;
       case 'rainy':
-        return <Droplets className="w-4 h-4 text-blue-400" />;
+        return <Droplets className="w-3 h-3 text-blue-400" />;
       default:
-        return <div className="w-4 h-4 rounded-full bg-gray-400"></div>;
-    }
-  };
-
-  const getConditionColor = (condition) => {
-    switch (condition.toLowerCase()) {
-      case 'clear':
-        return 'text-green-400';
-      case 'cloudy':
-        return 'text-yellow-400';
-      case 'rainy':
-        return 'text-red-400';
-      default:
-        return 'text-gray-400';
+        return <div className="w-3 h-3 rounded-full bg-gray-400"></div>;
     }
   };
 
@@ -51,43 +37,41 @@ const WeatherTable = ({ data }) => {
       </div>
 
       {/* Weather Data */}
-      <div className="flex-1 overflow-y-auto space-y-2">
+      <div className="flex-1 overflow-y-auto space-y-1">
         {filteredData.map((item, index) => (
           <div 
             key={index}
-            className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-2 hover:bg-white/10 transition-all duration-300"
+            className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-1.5 hover:bg-white/10 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1">
                 <span className="text-xs font-semibold text-blue-300">{item.airport}</span>
                 {getWeatherIcon(item.condition)}
               </div>
               <span className="text-xs text-blue-200">{item.time}</span>
             </div>
             
-            <div className="grid grid-cols-2 gap-1.5 text-xs">
+            <div className="grid grid-cols-3 gap-1 text-xs">
               <div className="flex items-center space-x-1">
                 <Thermometer className="w-3 h-3 text-orange-400" />
-                <span className="text-white">{item.temperature}°C</span>
+                <span className="text-white truncate">{item.temperature}°C</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Wind className="w-3 h-3 text-cyan-400" />
-                <span className="text-white">{item.windSpeed} mph</span>
+                <span className="text-white truncate">{item.windSpeed} mph</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Droplets className="w-3 h-3 text-blue-400" />
-                <span className="text-white">{item.humidity}%</span>
+                <span className="text-white truncate">{item.humidity}%</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Eye className="w-3 h-3 text-purple-400" />
-                <span className="text-white">{item.visibility} mi</span>
+                <span className="text-white truncate">{item.visibility} mi</span>
               </div>
-            </div>
-            
-            <div className="mt-1 pt-1 border-t border-white/10">
-              <span className={`text-xs font-medium ${getConditionColor(item.condition)}`}>
-                {item.condition}
-              </span>
+              <div className="flex items-center space-x-1">
+                <Cloud className="w-3 h-3 text-gray-400" />
+                <span className="text-white truncate">{item.cloudCover || '20'}%</span>
+              </div>
             </div>
           </div>
         ))}

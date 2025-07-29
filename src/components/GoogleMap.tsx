@@ -27,6 +27,14 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
     onMarkerSelect(airport);
   };
 
+  // Function to determine marker color based on weather conditions
+  const getMarkerColor = (airportCode) => {
+    // This would check actual weather data in a real implementation
+    // For demo, LHR has poor weather (rainy), so it should be red
+    const poorWeatherAirports = ['LHR']; // Can be expanded based on actual weather data
+    return poorWeatherAirports.includes(airportCode) ? 'red' : 'blue';
+  };
+
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-blue-900/20 to-slate-900/20">
       {/* Map Container - In real implementation, this would be the Google Maps container */}
@@ -41,6 +49,7 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
         {airports.map((airport, index) => {
           const isSelected = selectedMarker?.code === airport.code;
           const isFiltered = selectedAirport === 'all' || selectedAirport === airport.code;
+          const markerColor = getMarkerColor(airport.code);
           
           // Mock positioning based on index
           const positions = [
@@ -66,10 +75,16 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
                 <div className={`p-2 rounded-full backdrop-blur-md border-2 transition-all duration-300 ${
                   isSelected 
                     ? 'bg-cyan-400/30 border-cyan-400 shadow-lg shadow-cyan-400/25' 
+                    : markerColor === 'red'
+                    ? 'bg-red-500/20 border-red-400/50 hover:bg-red-500/30 hover:border-red-400'
                     : 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/30 hover:border-blue-400'
                 }`}>
                   <Plane className={`w-5 h-5 transition-colors duration-300 ${
-                    isSelected ? 'text-cyan-300' : 'text-blue-300'
+                    isSelected 
+                      ? 'text-cyan-300' 
+                      : markerColor === 'red' 
+                      ? 'text-red-300' 
+                      : 'text-blue-300'
                   }`} />
                 </div>
                 
