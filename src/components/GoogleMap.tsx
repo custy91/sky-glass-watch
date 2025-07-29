@@ -23,6 +23,7 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
   }, []);
 
   const handleAirportClick = (airport) => {
+    console.log('Airport clicked:', airport.code);
     onMarkerSelect(airport);
   };
 
@@ -62,19 +63,19 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
               onClick={() => handleAirportClick(airport)}
             >
               <div className={`relative ${isSelected ? 'animate-pulse' : ''}`}>
-                <div className={`p-3 rounded-full backdrop-blur-md border-2 transition-all duration-300 ${
+                <div className={`p-2 rounded-full backdrop-blur-md border-2 transition-all duration-300 ${
                   isSelected 
                     ? 'bg-cyan-400/30 border-cyan-400 shadow-lg shadow-cyan-400/25' 
                     : 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/30 hover:border-blue-400'
                 }`}>
-                  <Plane className={`w-6 h-6 transition-colors duration-300 ${
+                  <Plane className={`w-5 h-5 transition-colors duration-300 ${
                     isSelected ? 'text-cyan-300' : 'text-blue-300'
                   }`} />
                 </div>
                 
                 {/* Airport Label */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 text-center">
-                  <div className="backdrop-blur-md bg-black/20 border border-white/20 rounded-lg px-2 py-1">
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 text-center">
+                  <div className="backdrop-blur-md bg-black/20 border border-white/20 rounded px-1 py-0.5">
                     <p className="text-xs font-semibold text-white">{airport.code}</p>
                     <p className="text-xs text-blue-200">{airport.city}</p>
                   </div>
@@ -92,24 +93,24 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
         {/* Map Controls */}
         <div className="absolute top-4 right-4 space-y-2">
           <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg p-2">
-            <button className="block w-8 h-8 text-white hover:text-blue-300 transition-colors">+</button>
+            <button className="block w-6 h-6 text-white hover:text-blue-300 transition-colors text-sm">+</button>
           </div>
           <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg p-2">
-            <button className="block w-8 h-8 text-white hover:text-blue-300 transition-colors">-</button>
+            <button className="block w-6 h-6 text-white hover:text-blue-300 transition-colors text-sm">-</button>
           </div>
         </div>
       </div>
 
       {/* Selected Airport Info */}
       {selectedMarker && (
-        <div className="absolute bottom-4 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 shadow-2xl">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-full bg-cyan-400/20 border border-cyan-400/30">
-              <MapPin className="w-5 h-5 text-cyan-300" />
+        <div className="absolute bottom-4 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-3 shadow-2xl">
+          <div className="flex items-center space-x-2">
+            <div className="p-1.5 rounded-full bg-cyan-400/20 border border-cyan-400/30">
+              <MapPin className="w-4 h-4 text-cyan-300" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">{selectedMarker.name}</h3>
-              <p className="text-sm text-blue-200">{selectedMarker.city}, {selectedMarker.country}</p>
+              <h3 className="font-semibold text-white text-sm">{selectedMarker.name}</h3>
+              <p className="text-xs text-blue-200">{selectedMarker.city}, {selectedMarker.country}</p>
               <p className="text-xs text-blue-300">Code: {selectedMarker.code}</p>
             </div>
           </div>

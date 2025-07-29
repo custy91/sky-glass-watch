@@ -19,22 +19,27 @@ const WeatherDashboard = () => {
     ? flightData
     : flightData.filter(item => item.airport === selectedAirport);
 
+  const handleMarkerClick = (airport) => {
+    setSelectedMarker(airport);
+    setSelectedAirport(airport.code);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgo8cGF0aCBkPSJNIDYwIDAgTCAwIDAgMCA2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9wYXR0ZXJuPgo8L2RlZnM+CjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz4KPHN2Zz4=')] opacity-20"></div>
       
       {/* Header */}
-      <header className="relative z-10 p-6">
-        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-2xl">
+      <header className="relative z-10 p-4">
+        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4 shadow-2xl">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 rounded-full bg-blue-500/20 border border-blue-400/30">
-                <Cloud className="w-8 h-8 text-blue-300" />
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-full bg-blue-500/20 border border-blue-400/30">
+                <Cloud className="w-6 h-6 text-blue-300" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">Aviation Weather Dashboard</h1>
-                <p className="text-blue-200">Real-time weather monitoring and flight tracking</p>
+                <h1 className="text-2xl font-bold text-white">Aviation Weather Dashboard</h1>
+                <p className="text-sm text-blue-200">Real-time weather monitoring and flight tracking</p>
               </div>
             </div>
             <AirportFilter 
@@ -47,33 +52,33 @@ const WeatherDashboard = () => {
       </header>
 
       {/* Main Content */}
-      <div className="relative z-10 px-6 pb-6 flex gap-6 h-[calc(100vh-140px)]">
+      <div className="relative z-10 px-4 pb-4 flex gap-4 h-[calc(100vh-120px)]">
         {/* Map Section */}
-        <div className="flex-1 rounded-2xl overflow-hidden backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl">
+        <div className="flex-1 rounded-xl overflow-hidden backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl">
           <GoogleMap 
             airports={airports}
             selectedAirport={selectedAirport}
-            onMarkerSelect={setSelectedMarker}
+            onMarkerSelect={handleMarkerClick}
             selectedMarker={selectedMarker}
           />
         </div>
 
         {/* Sidebar */}
-        <div className="w-96 space-y-6">
+        <div className="w-80 space-y-3">
           {/* Weather Data */}
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-2xl">
-            <div className="flex items-center space-x-2 mb-4">
-              <Thermometer className="w-5 h-5 text-blue-300" />
-              <h2 className="text-xl font-semibold text-white">Weather Conditions</h2>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-3 shadow-2xl h-[50%]">
+            <div className="flex items-center space-x-2 mb-2">
+              <Thermometer className="w-4 h-4 text-blue-300" />
+              <h2 className="text-lg font-semibold text-white">Weather Conditions</h2>
             </div>
             <WeatherTable data={filteredWeatherData} />
           </div>
 
           {/* Flight Information */}
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-2xl flex-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <MapPin className="w-5 h-5 text-blue-300" />
-              <h2 className="text-xl font-semibold text-white">Flight Operations</h2>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-3 shadow-2xl h-[50%]">
+            <div className="flex items-center space-x-2 mb-2">
+              <MapPin className="w-4 h-4 text-blue-300" />
+              <h2 className="text-lg font-semibold text-white">Flight Operations</h2>
             </div>
             <FlightTable data={filteredFlightData} />
           </div>
@@ -81,12 +86,12 @@ const WeatherDashboard = () => {
       </div>
 
       {/* Floating Stats */}
-      <div className="absolute top-32 left-6 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 shadow-2xl">
-        <div className="flex items-center space-x-3">
-          <Eye className="w-5 h-5 text-cyan-300" />
+      <div className="absolute top-28 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-3 shadow-2xl">
+        <div className="flex items-center space-x-2">
+          <Eye className="w-4 h-4 text-cyan-300" />
           <div>
             <p className="text-xs text-blue-200">Active Airports</p>
-            <p className="text-lg font-semibold text-white">{airports.length}</p>
+            <p className="text-sm font-semibold text-white">{airports.length}</p>
           </div>
         </div>
       </div>
