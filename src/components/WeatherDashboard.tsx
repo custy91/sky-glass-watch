@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Cloud, Wind, Droplets, Eye, Thermometer, MapPin } from 'lucide-react';
 import GoogleMap from './GoogleMap';
@@ -101,7 +100,7 @@ const WeatherDashboard = () => {
       </div>
 
       {/* Floating Stats */}
-      <div className="absolute top-28 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-3 shadow-2xl">
+      <div className="absolute top-28 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-3 shadow-2xl z-20">
         <div className="flex items-center space-x-2">
           <Eye className="w-4 h-4 text-cyan-300" />
           <div>
@@ -111,9 +110,9 @@ const WeatherDashboard = () => {
         </div>
       </div>
 
-      {/* Enhanced Selected Airport Info */}
+      {/* Enhanced Selected Airport Info - Fixed z-index */}
       {selectedMarker && (
-        <div className="absolute bottom-4 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4 shadow-2xl min-w-[280px]">
+        <div className="fixed bottom-4 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4 shadow-2xl min-w-[280px] z-50">
           <div className="space-y-3">
             {/* Airport Header */}
             <div className="flex items-center space-x-2 border-b border-white/10 pb-2">
