@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { Cloud, Wind, Droplets, Eye, Thermometer, MapPin } from 'lucide-react';
+import { Cloud, Wind, Droplets, Eye, Thermometer, MapPin, AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import GoogleMap from './GoogleMap';
 import WeatherTable from './WeatherTable';
 import FlightTable from './FlightTable';
 import AirportFilter from './AirportFilter';
+import AdvisoryModal from './AdvisoryModal';
 import { weatherData, flightData, airports } from '../data/mockData';
 
 const WeatherDashboard = () => {
   const [selectedAirport, setSelectedAirport] = useState('all');
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [isAdvisoryModalOpen, setIsAdvisoryModalOpen] = useState(false);
 
   const filteredWeatherData = selectedAirport === 'all' 
     ? weatherData 
@@ -56,11 +59,20 @@ const WeatherDashboard = () => {
                 <p className="text-sm text-blue-200">Real-time weather monitoring and flight tracking</p>
               </div>
             </div>
-            <AirportFilter 
-              selectedAirport={selectedAirport}
-              onAirportChange={handleAirportFilterChange}
-              airports={airports}
-            />
+            <div className="flex items-center space-x-3">
+              <Button
+                onClick={() => setIsAdvisoryModalOpen(true)}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white flex items-center space-x-2"
+              >
+                <AlertTriangle className="w-4 h-4" />
+                <span>Generate Advisory</span>
+              </Button>
+              <AirportFilter 
+                selectedAirport={selectedAirport}
+                onAirportChange={handleAirportFilterChange}
+                airports={airports}
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -160,6 +172,12 @@ const WeatherDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Advisory Modal */}
+      <AdvisoryModal
+        isOpen={isAdvisoryModalOpen}
+        onClose={() => setIsAdvisoryModalOpen(false)}
+      />
     </div>
   );
 };
