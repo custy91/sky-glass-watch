@@ -24,6 +24,21 @@ const WeatherDashboard = () => {
     setSelectedAirport(airport.code);
   };
 
+  const handleAirportFilterChange = (airportCode) => {
+    setSelectedAirport(airportCode);
+    if (airportCode === 'all') {
+      setSelectedMarker(null);
+    } else {
+      const airport = airports.find(a => a.code === airportCode);
+      setSelectedMarker(airport);
+    }
+  };
+
+  // Get current weather data for selected airport
+  const selectedAirportWeather = selectedMarker 
+    ? weatherData.find(w => w.airport === selectedMarker.code)
+    : null;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
       {/* Background Pattern */}
@@ -44,7 +59,7 @@ const WeatherDashboard = () => {
             </div>
             <AirportFilter 
               selectedAirport={selectedAirport}
-              onAirportChange={setSelectedAirport}
+              onAirportChange={handleAirportFilterChange}
               airports={airports}
             />
           </div>
@@ -95,6 +110,57 @@ const WeatherDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Enhanced Selected Airport Info */}
+      {selectedMarker && (
+        <div className="absolute bottom-4 left-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4 shadow-2xl min-w-[280px]">
+          <div className="space-y-3">
+            {/* Airport Header */}
+            <div className="flex items-center space-x-2 border-b border-white/10 pb-2">
+              <div className="p-1.5 rounded-full bg-cyan-400/20 border border-cyan-400/30">
+                <MapPin className="w-4 h-4 text-cyan-300" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white text-sm">{selectedMarker.name}</h3>
+                <p className="text-xs text-blue-200">{selectedMarker.city}, {selectedMarker.country}</p>
+                <p className="text-xs text-blue-300">Code: {selectedMarker.code}</p>
+              </div>
+            </div>
+            
+            {/* Weather Data */}
+            {selectedAirportWeather && (
+              <div>
+                <p className="text-xs font-semibold text-blue-300 mb-2">Current Weather</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="flex items-center space-x-1">
+                    <Thermometer className="w-3 h-3 text-orange-400" />
+                    <span className="text-white">{selectedAirportWeather.temperature}°C</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Wind className="w-3 h-3 text-cyan-400" />
+                    <span className="text-white">{selectedAirportWeather.windSpeed} mph</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Droplets className="w-3 h-3 text-blue-400" />
+                    <span className="text-white">{selectedAirportWeather.humidity}%</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Eye className="w-3 h-3 text-purple-400" />
+                    <span className="text-white">{selectedAirportWeather.visibility} mi</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Cloud className="w-3 h-3 text-gray-400" />
+                    <span className="text-white">{selectedAirportWeather.cloudCover}% clouds</span>
+                  </div>
+                  <div className="text-xs text-blue-200">
+                    {selectedAirportWeather.condition}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
