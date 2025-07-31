@@ -25,7 +25,7 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
     // Only load script if not already loaded
     if (!document.querySelector('script[src*="maps.googleapis.com"]')) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=marker`;
       script.async = true;
       script.defer = true;
       
@@ -47,8 +47,8 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
       if (map) {
         // Clear all markers
         markersRef.current.forEach(markerObj => {
-          if (markerObj.marker) {
-            markerObj.marker.setMap(null);
+          if (markerObj.marker && markerObj.marker.map) {
+            markerObj.marker.map = null;
           }
         });
         markersRef.current = [];
@@ -81,6 +81,7 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
       const mapInstance = new window.google.maps.Map(mapRef.current, {
         center: { lat: 40.7128, lng: -74.0060 },
         zoom: 4,
+        mapId: 'aviation-weather-map', // Required for Advanced Markers
         styles: [
           {
             "featureType": "all",
@@ -112,13 +113,70 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
     }
   };
 
+  const createMarkerElement = (airport: any, isSelected: boolean) => {
+    const markerColor = getMarkerColor(airport.code);
+    
+    // Create marker element
+    const markerElement = document.createElement('div');
+    markerElement.className = 'custom-marker';
+    markerElement.style.cssText = `
+      position: relative;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      transform: ${isSelected ? 'scale(1.2)' : 'scale(1)'};
+      transition: transform 0.3s ease;
+    `;
+
+    // Create the pin container
+    const pinContainer = document.createElement('div');
+    pinContainer.style.cssText = `
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
+
+    // Create the pin background
+    const pinBackground = document.createElement('div');
+    pinBackground.style.cssText = `
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-color: ${markerColor === 'red' ? '#ef4444' : '#3b82f6'};
+      border: 2px solid ${isSelected ? '#00ffff' : '#ffffff'};
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    `;
+
+    // Create the icon
+    const icon = document.createElement('div');
+    icon.style.cssText = `
+      position: relative;
+      z-index: 2;
+      color: white;
+      font-size: 12px;
+      transform: rotate(45deg);
+    `;
+    icon.innerHTML = '✈️';
+
+    pinContainer.appendChild(pinBackground);
+    pinContainer.appendChild(icon);
+    markerElement.appendChild(pinContainer);
+
+    return markerElement;
+  };
+
   const createMarkers = (mapInstance: any) => {
     console.log('Creating markers for airports:', airports);
     
     // Clear existing markers
     markersRef.current.forEach(markerObj => {
-      if (markerObj.marker) {
-        markerObj.marker.setMap(null);
+      if (markerObj.marker && markerObj.marker.map) {
+        markerObj.marker.map = null;
       }
     });
     markersRef.current = [];
@@ -133,23 +191,40 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
 
     airports.forEach((airport) => {
       const position = positions[airport.code] || { lat: 0, lng: 0 };
-      const markerColor = getMarkerColor(airport.code);
+      const isSelected = selectedMarker?.code === airport.code;
 
       try {
-        const marker = new window.google.maps.Marker({
-          position: position,
-          map: mapInstance,
-          title: `${airport.name} (${airport.code})`,
-          icon: {
-            path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-            scale: 6,
-            fillColor: markerColor === 'red' ? '#ef4444' : '#3b82f6',
-            fillOpacity: 0.8,
-            strokeColor: '#ffffff',
-            strokeWeight: 1,
-            rotation: 45
-          }
-        });
+        const markerElement = createMarkerElement(airport, isSelected);
+        
+        // Use AdvancedMarkerElement if available, fallback to regular Marker
+        let marker;
+        if (window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+          marker = new window.google.maps.marker.AdvancedMarkerElement({
+            position: position,
+            map: mapInstance,
+            title: `${airport.name} (${airport.code})`,
+            content: markerElement
+          });
+        } else {
+          // Fallback to regular marker if AdvancedMarkerElement is not available
+          marker = new window.google.maps.Marker({
+            position: position,
+            map: mapInstance,
+            title: `${airport.name} (${airport.code})`,
+            icon: {
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 2C12.134 2 9 5.134 9 9c0 6.5 7 21 7 21s7-14.5 7-21c0-3.866-3.134-7-7-7z" 
+                        fill="${getMarkerColor(airport.code) === 'red' ? '#ef4444' : '#3b82f6'}" 
+                        stroke="${isSelected ? '#00ffff' : '#ffffff'}" 
+                        stroke-width="2"/>
+                  <text x="16" y="12" text-anchor="middle" fill="white" font-size="8">✈</text>
+                </svg>
+              `),
+              scaledSize: new window.google.maps.Size(32, 32)
+            }
+          });
+        }
 
         marker.addListener('click', () => {
           console.log('Airport marker clicked:', airport.code);
@@ -166,18 +241,28 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
   const updateMarkerStyles = () => {
     markersRef.current.forEach(({ marker, airport }) => {
       const isSelected = selectedMarker?.code === airport.code;
-      const markerColor = getMarkerColor(airport.code);
       
       try {
-        marker.setIcon({
-          path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-          scale: isSelected ? 8 : 6,
-          fillColor: markerColor === 'red' ? '#ef4444' : '#3b82f6',
-          fillOpacity: isSelected ? 1 : 0.8,
-          strokeColor: isSelected ? '#00ffff' : '#ffffff',
-          strokeWeight: isSelected ? 2 : 1,
-          rotation: 45
-        });
+        // If using AdvancedMarkerElement, update the content
+        if (marker.content) {
+          const newContent = createMarkerElement(airport, isSelected);
+          marker.content = newContent;
+        } else if (marker.setIcon) {
+          // Fallback for regular markers
+          const markerColor = getMarkerColor(airport.code);
+          marker.setIcon({
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 2C12.134 2 9 5.134 9 9c0 6.5 7 21 7 21s7-14.5 7-21c0-3.866-3.134-7-7-7z" 
+                      fill="${markerColor === 'red' ? '#ef4444' : '#3b82f6'}" 
+                      stroke="${isSelected ? '#00ffff' : '#ffffff'}" 
+                      stroke-width="2"/>
+                <text x="16" y="12" text-anchor="middle" fill="white" font-size="8">✈</text>
+              </svg>
+            `),
+            scaledSize: new window.google.maps.Size(isSelected ? 40 : 32, isSelected ? 40 : 32)
+          });
+        }
       } catch (error) {
         console.error('Error updating marker style:', airport.code, error);
       }
@@ -227,13 +312,16 @@ const GoogleMap = ({ airports, selectedAirport, onMarkerSelect, selectedMarker }
                   onClick={() => handleAirportClick(airport)}
                 >
                   <div className={`relative ${isSelected ? 'animate-pulse' : ''}`}>
-                    <Plane className={`w-5 h-5 transition-colors duration-300 ${
-                      isSelected 
-                        ? 'text-cyan-300' 
-                        : markerColor === 'red' 
-                        ? 'text-red-400' 
-                        : 'text-blue-400'
-                    }`} />
+                    <div className="relative">
+                      <MapPin className={`w-6 h-6 transition-colors duration-300 ${
+                        isSelected 
+                          ? 'text-cyan-300' 
+                          : markerColor === 'red' 
+                          ? 'text-red-400' 
+                          : 'text-blue-400'
+                      }`} />
+                      <Plane className="w-3 h-3 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    </div>
                     
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 text-center">
                       <div className="backdrop-blur-md bg-black/20 border border-white/20 rounded px-1 py-0.5">
